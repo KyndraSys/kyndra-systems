@@ -29,7 +29,7 @@ const Contact = () => {
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <div className="max-w-4xl">
               <h1 className="text-4xl md:text-6xl font-light text-white mb-6 leading-tight">
-                Get in <span className="font-normal" style={{ color: '#ff6200' }}>Touch</span>
+                Connect with Kyndra <span className="font-normal" style={{ color: '#ff6200' }}>Network</span>
               </h1>
               <p className="text-lg md:text-xl text-white mb-8 leading-relaxed opacity-90">
                 Ready to transform industries with IT and technology solutions? Reach us at{' '}

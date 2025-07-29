@@ -1,7 +1,7 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Clock, ChevronRight } from 'lucide-react';
 
-import logo from '../../assets/logo-o.png';
+import logo from '../../assets/logo-w.png';
 import kyndra from '../../assets/logo.png';
 
 

@@ -28,6 +28,8 @@ const HeroProductsSection = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
+  const [isTouched, setIsTouched] = useState(false);
+
   const categories = [
     { id: 'all', name: 'All Products', count: 18 },
     { id: 'web', name: 'Web Solutions', count: 8 },
@@ -456,16 +458,22 @@ const HeroProductsSection = () => {
                 Get expert software development and graphics design solutions tailored to your business needs. Through innovative technologies, creative design approaches, and strategic partnerships, we help securely connect your business to digital excellence. Let's build something amazing together.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                <button
-                  className="text-white px-8 py-4 rounded-lg font-semibold transition-all duration-200 flex items-center group"
-                  style={{ backgroundColor: '#000000' }}
-                  onMouseEnter={(e) => (e.target.style.backgroundColor = '#27397d')}
-                  onMouseLeave={(e) => (e.target.style.backgroundColor = '#000000')}
-                  onClick={() => window.location.href = '/blog'}
-                >
-                  Get Started
-                  <ArrowRight className="ml-3 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
-                </button>
+               <button
+      className="text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center w-full group sm:px-8 sm:py-4"
+      style={{ backgroundColor: '#000000' }}
+      onTouchStart={() => {
+        setIsTouched(true);
+        document.querySelector('button').style.backgroundColor = '#27397d';
+      }}
+      onTouchEnd={() => {
+        setIsTouched(false);
+        document.querySelector('button').style.backgroundColor = '#000000';
+      }}
+      onClick={() => window.location.href = '/blog'}
+    >
+      <span className="text-base sm:text-lg mr-2">Get Started</span>
+      <ArrowRight className={`h-5 w-5 sm:h-6 sm:w-6 transition-transform duration-200 ${isTouched ? 'translate-x-2 sm:translate-x-3' : ''} flex-shrink-0`} />
+    </button>
               </div>
               <p className="text-sm" style={{ color: '#A0A0A0' }}>
                 Join 200+ satisfied clients. Free consultation included.
