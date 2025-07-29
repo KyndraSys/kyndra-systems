@@ -1,0 +1,57 @@
+kyndra-systems/
+├── public/
+│   ├── assets/
+│   │   ├── icons/
+│   │   │   ├── logo.svg
+│   │   │   ├── web-icon.svg
+│   │   │   ├── graphics-icon.svg
+│   │   │   └── services/
+│   │   │       ├── spa-icon.svg
+│   │   │       ├── ecommerce-icon.svg
+│   │   │       ├── cms-icon.svg
+│   │   │       └── ...
+│   │   └── images/
+│   │       ├── hero/
+│   │       │   ├── enterprise-dashboard.jpg
+│   │       │   ├── ecommerce-platform.jpg
+│   │       │   └── corporate-design.jpg
+│   │       └── blog/
+│   │           ├── blog1.jpg
+│   │           ├── blog2.jpg
+│   │           └── blog3.jpg
+│   └── favicon.ico
+├── src/
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Header.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   └── Loading.jsx
+│   │   ├── home/
+│   │   │   ├── Hero.jsx
+│   │   │   ├── BlogSection.jsx
+│   │   │   ├── ServicesSection.jsx
+│   │   │   └── AboutSection.jsx
+│   │   ├── forms/
+│   │   │   └── OnboardingForm.jsx
+│   │   └── ui/
+│   │       ├── Button.jsx
+│   │       ├── Card.jsx
+│   │       └── Modal.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── Services.jsx
+│   │   ├── Blog.jsx
+│   │   └── Contact.jsx
+│   ├── data/
+│   │   ├── services.js
+│   │   ├── blog.js
+│   │   └── company.js
+│   ├── hooks/
+│   │   └── useEmailJS.js
+│   ├── utils/
+│   │   ├── emailService.js
+│   │   └── constants.js
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+└── package.json
