@@ -207,7 +207,7 @@ const HeroProductsSection = () => {
               </h1>
               
               <p className="text-lg text-slate-300 mb-8 leading-relaxed">
-                Build robust, enterprise-grade applications and compelling visual designs with cutting-edge technology stacks and innovative creative solutions. Transform your digital presence with our comprehensive software and graphics services.
+                Build robust, enterprise-grade applications and compelling visual designs with cutting-edge technology stacks and innovative creative solutions.
               </p>
 
               <div className="flex items-center space-x-4">
