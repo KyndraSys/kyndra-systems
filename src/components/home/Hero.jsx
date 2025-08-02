@@ -282,7 +282,7 @@ const HeroProductsSection = () => {
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </button>
                 <button 
-                  onClick={() => window.location.href = '../onboard'}
+                  onClick={() => window.location.href = '../../onboard'}
                   className="border text-slate-300 hover:text-white px-6 py-3 rounded-md font-medium transition-colors flex items-center gap-2"
                   style={{ borderColor: '#FF6200' }}>
                   Get Started
@@ -533,7 +533,7 @@ const HeroProductsSection = () => {
   onMouseLeave={(e) => e.target.style.backgroundColor = '#27397d'}
   onTouchStart={(e) => e.target.style.backgroundColor = '#1e40af'}
   onTouchEnd={(e) => e.target.style.backgroundColor = '#27397d'}
-  onClick={() => window.location.href = '../onboard'}
+  onClick={() => window.location.href = '../../onboard'}
 >
   <span className="text-base sm:text-lg mr-2">Get Started</span>
   <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 transition-transform group-hover:translate-x-1 flex-shrink-0" />
