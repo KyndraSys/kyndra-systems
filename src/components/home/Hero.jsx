@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   ChevronRight, 
   ArrowRight, 
@@ -29,13 +29,6 @@ const HeroProductsSection = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const [isTouched, setIsTouched] = useState(false);
-
-  const categories = [
-    { id: 'all', name: 'All Products', count: 18 },
-    { id: 'web', name: 'Web Solutions', count: 8 },
-    { id: 'mobile', name: 'Mobile Apps', count: 5 },
-    { id: 'graphics', name: 'Graphics & Design', count: 5 }
-  ];
 
   const featuredProducts = [
     {
@@ -149,6 +142,71 @@ const HeroProductsSection = () => {
     }
   ];
 
+  // Filter products based on search term and category
+  const filteredProducts = useMemo(() => {
+    let filtered = allProducts;
+    
+    // Filter by search term
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(product =>
+        product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        product.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    // Filter by category
+    if (activeCategory !== 'all') {
+      const categoryMap = {
+        'web': 'Web Solutions',
+        'mobile': 'Mobile Apps',
+        'graphics': 'Graphics & Design'
+      };
+      filtered = filtered.filter(product => product.category === categoryMap[activeCategory]);
+    }
+    
+    return filtered;
+  }, [searchTerm, activeCategory]);
+
+  // Filter featured products based on search term
+  const filteredFeaturedProducts = useMemo(() => {
+    if (!searchTerm.trim()) return featuredProducts;
+    
+    return featuredProducts.filter(product =>
+      product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      product.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm]);
+
+  // Calculate dynamic category counts based on current search
+  const categories = useMemo(() => {
+    let productsToCount = allProducts;
+    
+    // If there's a search term, filter first
+    if (searchTerm.trim()) {
+      productsToCount = allProducts.filter(product =>
+        product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        product.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    const webCount = productsToCount.filter(p => p.category === 'Web Solutions').length;
+    const mobileCount = productsToCount.filter(p => p.category === 'Mobile Apps').length;
+    const graphicsCount = productsToCount.filter(p => p.category === 'Graphics & Design').length;
+    
+    return [
+      { id: 'all', name: 'All Products', count: productsToCount.length },
+      { id: 'web', name: 'Web Solutions', count: webCount },
+      { id: 'mobile', name: 'Mobile Apps', count: mobileCount },
+      { id: 'graphics', name: 'Graphics & Design', count: graphicsCount }
+    ];
+  }, [searchTerm]);
+
   const stats = [
     { number: '200+', label: 'Projects delivered successfully', icon: Award },
     { number: '50+', label: 'Enterprise clients served', icon: Users },
@@ -209,7 +267,7 @@ const HeroProductsSection = () => {
               </h1>
               
               <p className="text-lg text-slate-300 mb-8 leading-relaxed">
-                Build robust, enterprise-grade applications and compelling visual designs with cutting-edge technology stacks and innovative creative solutions.
+                We build robust, enterprise-grade applications and compelling visual designs with cutting-edge technology stacks and innovative creative solutions.
               </p>
 
               <div className="flex items-center space-x-4">
@@ -224,7 +282,7 @@ const HeroProductsSection = () => {
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </button>
                 <button 
-                  onClick={() => window.location.href = '/blog'}
+                  onClick={() => window.location.href = '../onboard'}
                   className="border text-slate-300 hover:text-white px-6 py-3 rounded-md font-medium transition-colors flex items-center gap-2"
                   style={{ borderColor: '#FF6200' }}>
                   Get Started
@@ -276,82 +334,84 @@ const HeroProductsSection = () => {
       </section>
 
       {/* Featured Products */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="mb-12">
-            <h2 className="text-3xl font-normal mb-4" style={{ color: '#27397d' }}>
-              Featured Products
-            </h2>
-            <p className="text-lg" style={{ color: '#A0A0A0' }}>
-              Our flagship software solutions and design services that drive digital transformation
-            </p>
-          </div>
+      {(!searchTerm.trim() || filteredFeaturedProducts.length > 0) && (
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div className="mb-12">
+              <h2 className="text-3xl font-normal mb-4" style={{ color: '#27397d' }}>
+                Featured Products
+              </h2>
+              <p className="text-lg" style={{ color: '#A0A0A0' }}>
+                Our flagship software solutions and design services that drive digital transformation
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-            {featuredProducts.map((product) => (
-              <article key={product.id} className="group cursor-pointer">
-                <div className="bg-gray-100 rounded-lg aspect-video mb-6 overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center"
-                       style={{ background: 'linear-gradient(135deg, #a0a0a0 0%, #a0a0a0 100%)' }}>
-                    <div className="text-center text-white">
-                      {product.icon}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <div className="flex items-center text-sm space-x-4" style={{ color: '#A0A0A0' }}>
-                    <span className="text-white px-2 py-1 rounded text-xs font-medium"
-                          style={{ backgroundColor: '#FF6200' }}>
-                      {product.category}
-                    </span>
-                    <div className="flex items-center">
-                      <Calendar className="h-3 w-3 mr-1" />
-                      {new Date(product.date).toLocaleDateString()}
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="h-3 w-3 mr-1" />
-                      {product.readTime}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+              {filteredFeaturedProducts.map((product) => (
+                <article key={product.id} className="group cursor-pointer">
+                  <div className="bg-gray-100 rounded-lg aspect-video mb-6 overflow-hidden">
+                    <div className="w-full h-full flex items-center justify-center"
+                         style={{ background: 'linear-gradient(135deg, #a0a0a0 0%, #a0a0a0 100%)' }}>
+                      <div className="text-center text-white">
+                        {product.icon}
+                      </div>
                     </div>
                   </div>
                   
-                  <h3 className="text-xl font-medium group-hover:transition-colors leading-tight"
-                      style={{ color: '#27397d' }}
-                      onMouseEnter={(e) => e.target.style.color = '#FF6200'}
-                      onMouseLeave={(e) => e.target.style.color = '#27397d'}>
-                    {product.title}
-                  </h3>
-                  
-                  <p className="leading-relaxed" style={{ color: '#A0A0A0' }}>
-                    {product.excerpt}
-                  </p>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-sm" style={{ color: '#A0A0A0' }}>
-                      <User className="h-4 w-4 mr-1" />
-                      {product.author}
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm space-x-4" style={{ color: '#A0A0A0' }}>
+                      <span className="text-white px-2 py-1 rounded text-xs font-medium"
+                            style={{ backgroundColor: '#FF6200' }}>
+                        {product.category}
+                      </span>
+                      <div className="flex items-center">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {new Date(product.date).toLocaleDateString()}
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="h-3 w-3 mr-1" />
+                        {product.readTime}
+                      </div>
                     </div>
                     
-                    <div className="flex items-center text-sm font-medium group-hover:opacity-80"
-                         style={{ color: '#FF6200' }}>
-                      View Product
-                      <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
+                    <h3 className="text-xl font-medium group-hover:transition-colors leading-tight"
+                        style={{ color: '#27397d' }}
+                        onMouseEnter={(e) => e.target.style.color = '#FF6200'}
+                        onMouseLeave={(e) => e.target.style.color = '#27397d'}>
+                      {product.title}
+                    </h3>
+                    
+                    <p className="leading-relaxed" style={{ color: '#A0A0A0' }}>
+                      {product.excerpt}
+                    </p>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-sm" style={{ color: '#A0A0A0' }}>
+                        <User className="h-4 w-4 mr-1" />
+                        {product.author}
+                      </div>
+                      
+                      <div className="flex items-center text-sm font-medium group-hover:opacity-80"
+                           style={{ color: '#FF6200' }}>
+                        View Product
+                        <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      {product.tags.map((tag) => (
+                        <span key={tag} className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                          #{tag}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {product.tags.map((tag) => (
-                      <span key={tag} className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* All Products */}
       <section className="py-16 bg-gray-50">
@@ -365,64 +425,72 @@ const HeroProductsSection = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {allProducts.map((product) => (
-              <article key={product.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
-                <div className="bg-gray-100 aspect-video overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center"
-                       style={{ background: 'linear-gradient(135deg, #000000 0%, #000000 100%)' }}>
-                    <div className="text-center text-white">
-                      {product.icon}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-6 space-y-4">
-                  <div className="flex items-center text-xs space-x-3" style={{ color: '#A0A0A0' }}>
-                    <span className="text-white px-2 py-1 rounded font-medium"
-                          style={{ backgroundColor: '#FF6200' }}>
-                      {product.category}
-                    </span>
-                    <div className="flex items-center">
-                      <Calendar className="h-3 w-3 mr-1" />
-                      {new Date(product.date).toLocaleDateString()}
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-12">
+              <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-medium text-gray-600 mb-2">No products found</h3>
+              <p className="text-gray-500">Try adjusting your search terms or category filter</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredProducts.map((product) => (
+                <article key={product.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
+                  <div className="bg-gray-100 aspect-video overflow-hidden">
+                    <div className="w-full h-full flex items-center justify-center"
+                         style={{ background: 'linear-gradient(135deg, #000000 0%, #000000 100%)' }}>
+                      <div className="text-center text-white">
+                        {product.icon}
+                      </div>
                     </div>
                   </div>
                   
-                  <h3 className="text-lg font-medium group-hover:transition-colors leading-tight"
-                      style={{ color: '#27397d' }}
-                      onMouseEnter={(e) => e.target.style.color = '#FF6200'}
-                      onMouseLeave={(e) => e.target.style.color = '#27397d'}>
-                    {product.title}
-                  </h3>
-                  
-                  <p className="text-sm leading-relaxed" style={{ color: '#A0A0A0' }}>
-                    {product.excerpt}
-                  </p>
-                  
-                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <div className="flex items-center text-xs" style={{ color: '#A0A0A0' }}>
-                      <User className="h-3 w-3 mr-1" />
-                      {product.author}
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-center text-xs space-x-3" style={{ color: '#A0A0A0' }}>
+                      <span className="text-white px-2 py-1 rounded font-medium"
+                            style={{ backgroundColor: '#FF6200' }}>
+                        {product.category}
+                      </span>
+                      <div className="flex items-center">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {new Date(product.date).toLocaleDateString()}
+                      </div>
                     </div>
                     
-                    <div className="flex items-center text-xs" style={{ color: '#A0A0A0' }}>
-                      <Clock className="h-3 w-3 mr-1" />
-                      {product.readTime}
+                    <h3 className="text-lg font-medium group-hover:transition-colors leading-tight"
+                        style={{ color: '#27397d' }}
+                        onMouseEnter={(e) => e.target.style.color = '#FF6200'}
+                        onMouseLeave={(e) => e.target.style.color = '#27397d'}>
+                      {product.title}
+                    </h3>
+                    
+                    <p className="text-sm leading-relaxed" style={{ color: '#A0A0A0' }}>
+                      {product.excerpt}
+                    </p>
+                    
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                      <div className="flex items-center text-xs" style={{ color: '#A0A0A0' }}>
+                        <User className="h-3 w-3 mr-1" />
+                        {product.author}
+                      </div>
+                      
+                      <div className="flex items-center text-xs" style={{ color: '#A0A0A0' }}>
+                        <Clock className="h-3 w-3 mr-1" />
+                        {product.readTime}
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-1">
+                      {product.tags.map((tag) => (
+                        <span key={tag} className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                          #{tag}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                  
-                  <div className="flex flex-wrap gap-1">
-                    {product.tags.map((tag) => (
-                      <span key={tag} className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                </article>
+              ))}
+            </div>
+          )}
 
           {/* Load More */}
           <div className="text-center mt-12">
@@ -458,22 +526,18 @@ const HeroProductsSection = () => {
                 Get expert software development and graphics design solutions tailored to your business needs. Through innovative technologies, creative design approaches, and strategic partnerships, we help securely connect your business to digital excellence. Let's build something amazing together.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
-               <button
-      className="text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center w-full group sm:px-8 sm:py-4"
-      style={{ backgroundColor: '#000000' }}
-      onTouchStart={() => {
-        setIsTouched(true);
-        document.querySelector('button').style.backgroundColor = '#27397d';
-      }}
-      onTouchEnd={() => {
-        setIsTouched(false);
-        document.querySelector('button').style.backgroundColor = '#000000';
-      }}
-      onClick={() => window.location.href = '/blog'}
-    >
-      <span className="text-base sm:text-lg mr-2">Get Started</span>
-      <ArrowRight className={`h-5 w-5 sm:h-6 sm:w-6 transition-transform duration-200 ${isTouched ? 'translate-x-2 sm:translate-x-3' : ''} flex-shrink-0`} />
-    </button>
+<button
+  className="text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center w-full group sm:px-8 sm:py-4"
+  style={{ backgroundColor: '#27397d' }}
+  onMouseEnter={(e) => e.target.style.backgroundColor = '#1e40af'}
+  onMouseLeave={(e) => e.target.style.backgroundColor = '#27397d'}
+  onTouchStart={(e) => e.target.style.backgroundColor = '#1e40af'}
+  onTouchEnd={(e) => e.target.style.backgroundColor = '#27397d'}
+  onClick={() => window.location.href = '../onboard'}
+>
+  <span className="text-base sm:text-lg mr-2">Get Started</span>
+  <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 transition-transform group-hover:translate-x-1 flex-shrink-0" />
+</button>
               </div>
               <p className="text-sm" style={{ color: '#A0A0A0' }}>
                 Join 200+ satisfied clients. Free consultation included.

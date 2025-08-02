@@ -10,7 +10,7 @@ const Header = () => {
 
   const navigation = [
     { name: 'Home', href: '/' },
-        { name: 'Onboard', href: '/blog' },
+        { name: 'Onboard', href: '/onboard' },
     { name: 'Contact', href: '/contact' },
   ];
 
@@ -54,7 +54,7 @@ const Header = () => {
           {/* CTA Button - Updated with brand orange */}
           <div className="hidden md:flex items-center space-x-4">
             <Link
-              to="/blog"
+              to="/onboard"
               className="px-4 py-2 rounded-lg font-medium text-white transition-colors"
               style={{ backgroundColor: '#ff6200' }}
               onMouseEnter={(e) => e.target.style.backgroundColor = '#e55a00'}
@@ -97,7 +97,7 @@ const Header = () => {
                 </Link>
               ))}
               <Link
-                to="/blog"
+                to="/onboard"
                 className="mt-4 px-4 py-2 rounded-lg font-medium text-white text-center transition-colors"
                 style={{ backgroundColor: '#ff6200' }}
                 onClick={() => setIsMenuOpen(false)}

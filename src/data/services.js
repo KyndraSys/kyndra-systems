@@ -1,7 +1,7 @@
 export const webServices = [
   {
     id: 1,
-    name: "Static Web Applications",
+    name: "Standard Websites",
     description: "Fast, professional landing pages for startups and solopreneurs",
     deliverables: ["Custom homepage", "About & Contact pages", "Brand integration", "Light SEO"],
     icon: "🌐",
@@ -17,7 +17,7 @@ export const webServices = [
   },
   {
     id: 3,
-    name: "SPA + Dashboards",
+    name: "Single Page Apps + Dashboards",
     description: "Central control systems with performance metrics and analytics",
     deliverables: ["SPA frontend", "Analytics UI", "Dashboard panels", "Responsive UX"],
     icon: "📊",

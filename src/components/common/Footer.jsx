@@ -44,7 +44,7 @@ const Footer = () => {
               
               {/* Start Project Button */}
               <a 
-                href="/blog"
+                href="/onboard"
                 className="inline-flex items-center px-6 py-3 bg-[#a0a0a0] text-black text-sm font-medium rounded-lg hover:bg-[#e55500] transition-colors"
               >
                 Start Your Project
@@ -130,7 +130,7 @@ const Footer = () => {
                 Powered by
               </span>
               <a 
-                href="https://kyndrasystems.com" 
+                href="https://kyndra001.vercel.app" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-black hover:text-[#ff6200] transition-colors"

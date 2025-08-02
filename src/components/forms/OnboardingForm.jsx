@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { X, Upload, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { webServices, graphicsServices } from '../../data/services';
+import { useCallback, useMemo } from 'react';
 
 const OnboardingForm = ({ isOpen, onClose }) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -88,31 +89,129 @@ const OnboardingForm = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleSubmit = () => {
-    // Create JSON data for submission
-    const submissionData = {
-      ...formData,
-      submittedAt: new Date().toISOString(),
-      selectedServiceNames: formData.selectedServices.map(id => 
-        allServices.find(service => service.id === id)?.name
-      ).filter(Boolean)
-    };
+const validateForm = useCallback(() => {
+  const errors = [];
+  
+  // Required field checks
 
-    // In a real app, you would send this to your backend
-    console.log('Form Submission:', submissionData);
-    
-    // For demo purposes, create a downloadable JSON file
-    const dataStr = JSON.stringify(submissionData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `kyndra-systems-onboarding-${Date.now()}.json`;
-    link.click();
-    
-    alert('Thank you! Your project details have been submitted. We will contact you within 24 hours.');
-    onClose();
+  
+  if (!formData.companyName?.trim()) {
+    errors.push('Company/Project name is required');
+  }
+  
+  if (!formData.email?.trim()) {
+    errors.push('Email is required');
+  } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    errors.push('Please enter a valid email address');
+  }
+  
+  if (!formData.phone?.trim()) {
+    errors.push('Phone number is required');
+  }
+  
+  if (!formData.projectDescription?.trim()) {
+    errors.push('Project description is required');
+  }
+  
+  if (!formData.selectedServices || formData.selectedServices.length === 0) {
+    errors.push('Please select at least one service');
+  }
+  
+
+  
+  if (!formData.timeline?.trim()) {
+    errors.push('Timeline is required');
+  }
+  
+  return errors;
+}, [formData]);
+
+const handleSubmit = async () => {
+  // Validate form before submission
+  const validationErrors = validateForm();
+  
+  if (validationErrors.length > 0) {
+    alert('Please fill in all required fields:\n\n' + validationErrors.join('\n'));
+    return;
+  }
+  
+  // Create service lookup map
+  const serviceMap = {};
+  allServices.forEach(service => {
+    serviceMap[service.id] = service.name;
+  });
+
+  const submissionData = {
+    ...formData,
+    submittedAt: new Date().toISOString(),
+    selectedServiceNames: formData.selectedServices
+      .map(id => serviceMap[id])
+      .filter(Boolean)
   };
+
+  try {
+    // First, save to backend
+    const response = await fetch('http://localhost:3001/api/submissions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(submissionData)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('Submission successful:', result);
+    
+    // Then, send email confirmation
+    await sendEmailConfirmation(submissionData);
+    
+    alert('Thank you! Your project details have been submitted and a confirmation email has been sent. We will contact you within 24 hours.');
+    onClose();
+  } catch (error) {
+    console.error('Submission failed:', error);
+    const errorMessage = error.name === 'TypeError' 
+      ? 'Network error. Please check your connection and try again.'
+      : 'Sorry, there was an error submitting your form. Please try again.';
+    alert(errorMessage);
+  }
+};
+
+// Email sending function
+const sendEmailConfirmation = async (submissionData) => {
+  // Prepare email data for the template
+  const emailData = {
+    to_email: submissionData.email,
+    to_name: submissionData.contactName || submissionData.companyName,
+    project_title: submissionData.projectName,
+    company_name: submissionData.companyName,
+    selected_services: submissionData.selectedServiceNames.join(', '),
+    project_description: submissionData.projectDescription,
+
+    timeline: submissionData.timeline,
+    phone: submissionData.phone,
+    submitted_date: new Date(submissionData.submittedAt).toLocaleDateString(),
+    reply_to: submissionData.email
+  };
+
+  try {
+    console.log('Sending email with data:', emailData);
+    
+    const emailResponse = await emailjs.send(
+      "kyndra", // Your service ID
+      "template_gfr9gus", // Your template ID  
+      emailData,
+      "oTpL_XYmDSHLjSO3b" // Your public key
+    );
+    
+    console.log('Email sent successfully:', emailResponse);
+  } catch (error) {
+    console.error('Email sending failed:', error);
+
+  }
+};
 
   if (!isOpen) return null;
 
@@ -152,7 +251,7 @@ const OnboardingForm = ({ isOpen, onClose }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Company Name *
+                    Company/Project *
                   </label>
                   <input
                     type="text"
